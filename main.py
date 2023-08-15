@@ -1,7 +1,6 @@
 import pandas as pd
 from youtube_manager import youtube_manager
-from analysis import sentiment_analysis
-from analysis import analysis_displayer
+from analysis import sentiment_analysis, analysis_displayer
 
 # YouTube Data API v3 API Key
 # Read the API key from key.txt
@@ -67,6 +66,6 @@ while True:
         else:
             # User enters an integer that is not a valid option
             print("Invalid Input")
-    except ValueError:
+    except Exception as e:
         # Error handling when input is in an invalid format (not an integer)
-        print("Invalid Input")
+        print(e)

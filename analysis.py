@@ -1,21 +1,34 @@
-from transformers import Pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from scipy.special import softmax
+import numpy as np
+
+MODEL = "cardiffnlp/twitter-roberta-base-sentiment"
+tokenizer = AutoTokenizer.from_pretrained(MODEL)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 
 
 class sentiment_analysis:
-    def __init__(self):
-        self.sentiment_analyser = Pipeline(
-            "sentiment-analysis", model="roberta-large")
-
     def analyse(self, df):
-        sentiments = self.sentiment_analyser(df["Comment"].tolist())
+        print("This may take a while...")
 
-        # Extract sentiment labels and scores
-        sentiment_labels = [sentiment["label"] for sentiment in sentiments]
-        sentiment_scores = [sentiment["score"] for sentiment in sentiments]
+        comments = df["Comment"].tolist()
 
-        # Add sentiment columns to the DataFrame
-        df["Sentiment_Label"] = sentiment_labels
-        df["Sentiment_Score"] = sentiment_scores
+        sentiment_labels = ["Negative", "Neutral", "Positive"]
+        sentiment_columns = {label: [] for label in sentiment_labels}
+
+        for comment in comments:
+            inputs = tokenizer(
+                comment, padding=True, truncation=True, return_tensors="pt")
+            outputs = model(**inputs)
+            scores = outputs.logits[0].detach().numpy()
+            scores = softmax(scores)
+
+            for label, score in zip(sentiment_labels, scores):
+                sentiment_columns[label].append(score)
+
+        # Add sentiment score columns to the DataFrame
+        for label in sentiment_labels:
+            df[label] = sentiment_columns[label]
 
         return df
 
