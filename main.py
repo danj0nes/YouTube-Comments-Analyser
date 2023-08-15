@@ -1,6 +1,7 @@
 import pandas as pd
 from youtube_manager import youtube_manager
 from analysis import sentiment_analysis
+from analysis import analysis_displayer
 
 # YouTube Data API v3 API Key
 # Read the API key from key.txt
@@ -9,12 +10,33 @@ with open("key.txt", "r") as key_file:
 
 global df
 
+
+def is_df():
+    if not df:
+        try:
+            # Read the CSV file into a DataFrame
+            df = pd.read_csv('youtube_comments.csv')
+        except FileNotFoundError:
+            print("Gather Comments First")
+            return False
+    return True
+
+
+def df_analysed():
+    if ("Sentiment" in df.columns):
+        return True
+    else:
+        print("Conduct Sentiment Analysis First")
+        return False
+
+
 while True:
     print(
         "Welcome to the project," +
         "\n0 - Quit" +
         "\n1 - Gather Comments" +
-        "\n1 - Analyse Comments"
+        "\n2 - Conduct Sentiment Analysis" +
+        "\n3 - Display Analysis"
     )
     try:
         # Read the user's choice as an integer
@@ -25,16 +47,16 @@ while True:
             yt_manager = youtube_manager(API_KEY)
             df = yt_manager.collect()
             yt_manager.save_comments(df)
-        # Analyse Comments
+        # Conduct Sentiment Analysis
         elif user_input == 2:
-            if not df:
-                try:
-                    # Read the CSV file into a DataFrame
-                    df = pd.read_csv('youtube_comments.csv')
-                except FileNotFoundError:
-                    print("Gather Comments First")
-                    continue
-
+            if (is_df()):
+                sent_analyser = sentiment_analysis()
+                sent_analyser.analyse(df)
+        # Display Analysis
+        elif user_input == 3:
+            if (is_df() and df_analysed()):
+                displayer = analysis_displayer()
+                displayer.display()
          # Exit the console
         elif user_input == 0:
             print("Goodbye")
