@@ -8,32 +8,32 @@ from analysis import analysis_displayer
 with open("key.txt", "r") as key_file:
     API_KEY = key_file.read().strip()
 
-global df
 
-
-def is_df():
-    if not df:
-        try:
-            # Read the CSV file into a DataFrame
-            df = pd.read_csv('saved_df.csv')
-        except FileNotFoundError:
-            print("Gather Comments First")
-            return False
+def valid_df(required_columns):
+    if (df.shape[1] < required_columns):
+        print("Cannot Perform this yet")
+        return False
     return True
 
 
 def save_df():
     df.to_csv("saved_df.csv", index=False)
-    print("Comments saved to 'saved_df.csv'.")
+    print("DataFrame saved to 'saved_df.csv'.")
 
 
-def df_analysed():
-    if ("Sentiment" in df.columns):
-        return True
-    else:
-        print("Conduct Sentiment Analysis First")
-        return False
+def read_df():
+    try:
+        # Read the CSV file into a DataFrame
+        return pd.read_csv('saved_df.csv')
+    except FileNotFoundError:
+        print("No Saved DataFrame")
+        return pd.DataFrame()
 
+
+df = read_df()
+yt_manager = youtube_manager(API_KEY)
+sent_analyser = sentiment_analysis()
+displayer = analysis_displayer()
 
 while True:
     print(
@@ -49,19 +49,16 @@ while True:
 
         # Gather Comments
         if user_input == 1:
-            yt_manager = youtube_manager(API_KEY)
             df = yt_manager.collect_comments()
             save_df()
         # Conduct Sentiment Analysis
         elif user_input == 2:
-            if (is_df()):
-                sent_analyser = sentiment_analysis()
+            if (valid_df(required_columns=1)):
                 df = sent_analyser.analyse(df)
                 save_df()
         # Display Analysis
         elif user_input == 3:
-            if (is_df() and df_analysed()):
-                displayer = analysis_displayer()
+            if (valid_df(required_columns=2)):
                 displayer.display()
          # Exit the console
         elif user_input == 0:
