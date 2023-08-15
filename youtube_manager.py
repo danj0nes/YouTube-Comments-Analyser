@@ -1,7 +1,6 @@
 import re  # regular expressions
 import pandas as pd
 from googleapiclient.discovery import build
-from youtube_manager import youtube_manager
 
 
 class youtube_manager:

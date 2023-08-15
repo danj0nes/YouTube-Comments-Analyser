@@ -1,7 +1,6 @@
-import re  # regular expressions
 import pandas as pd
-from googleapiclient.discovery import build
 from youtube_manager import youtube_manager
+from analysis import sentiment_analysis
 
 # YouTube Data API v3 API Key
 # Read the API key from key.txt
@@ -31,8 +30,7 @@ while True:
             if not df:
                 try:
                     # Read the CSV file into a DataFrame
-                    df = pd.read_csv(
-                        'playlist.csv',  parse_dates=['DateAdded'])
+                    df = pd.read_csv('youtube_comments.csv')
                 except FileNotFoundError:
                     print("Gather Comments First")
                     continue
