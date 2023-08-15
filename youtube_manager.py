@@ -16,10 +16,6 @@ class youtube_manager:
         df = pd.DataFrame(comments, columns=["Comment"])
         return df
 
-    def save_comments(self, df):
-        df.to_csv("youtube_comments.csv", index=False)
-        print("Comments saved to 'youtube_comments.csv'.")
-
 
 # Function to retrieve top 100 comments
 def get_top_comments(youtube, video_id):

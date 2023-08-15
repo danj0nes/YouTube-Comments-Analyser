@@ -15,11 +15,16 @@ def is_df():
     if not df:
         try:
             # Read the CSV file into a DataFrame
-            df = pd.read_csv('youtube_comments.csv')
+            df = pd.read_csv('saved_df.csv')
         except FileNotFoundError:
             print("Gather Comments First")
             return False
     return True
+
+
+def save_df():
+    df.to_csv("saved_df.csv", index=False)
+    print("Comments saved to 'saved_df.csv'.")
 
 
 def df_analysed():
@@ -45,13 +50,14 @@ while True:
         # Gather Comments
         if user_input == 1:
             yt_manager = youtube_manager(API_KEY)
-            df = yt_manager.collect()
-            yt_manager.save_comments(df)
+            df = yt_manager.collect_comments()
+            save_df()
         # Conduct Sentiment Analysis
         elif user_input == 2:
             if (is_df()):
                 sent_analyser = sentiment_analysis()
-                sent_analyser.analyse(df)
+                df = sent_analyser.analyse(df)
+                save_df()
         # Display Analysis
         elif user_input == 3:
             if (is_df() and df_analysed()):
