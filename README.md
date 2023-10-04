@@ -29,3 +29,11 @@ To get started with this project, follow the steps below:
   ```bash
   python main.py
   ```
+
+### Contributing
+
+Contributions to this project are welcome! Feel free to open issues or submit pull requests for improvements or bug fixes.
+
+### License
+
+This project is licensed under the [MIT License](LICENSE).
